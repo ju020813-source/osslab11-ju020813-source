@@ -1,9 +1,3 @@
-import math
+from .utils import circle_area, circle_circumference
 
-def circle_area(r: float) -> float:
-    """반지름 r인 원의 넓이"""
-    return math.pi * r * r
-
-def circle_circumference(r: float) -> float:
-    """반지름 r인 원의 둘레"""
-    return 2 * math.pi * r
+__all__ = ["circle_area", "circle_circumference"]
