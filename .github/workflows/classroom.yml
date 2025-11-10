@@ -1,7 +1,41 @@
-from geo import circle_area, circumference, rect_area, tri_area
+name: Autograding Tests
 
-if __name__ == "__main__":
-    print("circle area:", circle_area(5))
-    print("circle circumference:", circumference(5))
-    print("rectangle area:", rect_area(4, 6))
-    print("triangle area:", tri_area(3, 8))
+on:
+  push:
+  repository_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: test
+        id: test
+        uses: classroom-resources/autograding-io-grader@v1
+        with:
+          test-name: test
+          setup-command: ''
+          command: python tester.py
+          input: ''
+          comparison-method: contains
+          expected-output: |
+            c = 31.41592653589793
+            area = 78.53981633974483
+          timeout: 10
+
+      - name: Autograding Reporter
+        if: always()
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TEST_RESULTS: ${{ steps.test.outputs.result }}
+        with:
+          runners: test
